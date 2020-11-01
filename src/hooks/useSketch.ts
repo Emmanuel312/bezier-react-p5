@@ -64,7 +64,7 @@ const useSketch = ({ bezierPointsList }: ISketchProps) => {
       const currentPoint = casteljauRecursive(P5, points, t);
       bezier.push(currentPoint);
     }
-    console.log(bezier);
+
     for (let i = 0; i < bezier.length - 1; i++) {
       P5.line(
         bezier[i].x,
@@ -73,6 +73,7 @@ const useSketch = ({ bezierPointsList }: ISketchProps) => {
         bezier[i + 1].y,
       );
     }
+    bezier = [];
   }
 
   const setup = useCallback(
@@ -82,7 +83,6 @@ const useSketch = ({ bezierPointsList }: ISketchProps) => {
       bezierList = bezierPointsList.map((bezier) =>
         bezier.map((point) => P5.createVector(point.x, point.y)),
       );
-      console.log(`bezierList`, bezierList);
       t = 0;
       bezier = [];
     },
@@ -99,7 +99,7 @@ const useSketch = ({ bezierPointsList }: ISketchProps) => {
 
     bezierList.forEach((bezier) => bezierCurve(P5, bezier));
 
-    P5.noLoop();
+    // P5.noLoop();
   }, []);
 
   return { draw, setup };

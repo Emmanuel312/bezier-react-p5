@@ -40,6 +40,7 @@ const App: React.FC = () => {
   return (
     <div>
       <Sketch setup={setup} draw={draw} />
+
       <button type="button" onClick={handleAdd}>
         click
       </button>
