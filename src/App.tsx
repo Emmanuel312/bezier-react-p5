@@ -3,46 +3,57 @@ import Sketch from 'react-p5';
 import useSketch from './hooks/useSketch';
 import { Point } from './interfaces';
 
-// const bezier0: Point[] = [
-//   { x: Math.random() * 400, y: Math.random() * 400 },
-//   { x: Math.random() * 400, y: Math.random() * 400 },
-//   { x: Math.random() * 400, y: Math.random() * 400 },
-// ];
-
-// const bezier1: Point[] = [
-//   { x: Math.random() * 400, y: Math.random() * 400 },
-//   { x: Math.random() * 400, y: Math.random() * 400 },
-//   { x: Math.random() * 400, y: Math.random() * 400 },
-// ];
-
-// const bezier2: Point[] = [
-//   { x: Math.random() * 400, y: Math.random() * 400 },
-//   { x: Math.random() * 400, y: Math.random() * 400 },
-//   { x: Math.random() * 400, y: Math.random() * 400 },
-// ];
-
 const App: React.FC = () => {
   const [bezierPointsList, setBezierPointsList] = useState<Point[][]>(
     [],
   );
-  const { draw, setup } = useSketch({ bezierPointsList });
+  const [selected, setSelected] = useState<number>(-1);
+  const { draw, setup } = useSketch({ bezierPointsList, selected });
+
+  function makePoints(amount: number) {
+    const points = new Array(amount).fill(0);
+    return points.map((point) => ({
+      x: Math.random() * 1024,
+      y: Math.random() * 500,
+    }));
+  }
 
   function handleAdd() {
-    console.log(`foi`);
-    const newBezier = [
-      { x: Math.random() * 400, y: Math.random() * 400 },
-      { x: Math.random() * 400, y: Math.random() * 400 },
-      { x: Math.random() * 400, y: Math.random() * 400 },
-    ];
+    const newBezier = makePoints(5);
+    console.log(newBezier);
     setBezierPointsList([...bezierPointsList, newBezier]);
   }
 
+  function handleDelete() {
+    const newBezier = makePoints(5);
+    console.log(newBezier);
+    const { length } = bezierPointsList;
+    setBezierPointsList(
+      bezierPointsList.filter(
+        (bezierPoints, index) => index !== length - 1,
+      ),
+    );
+  }
+
+  function handleChangeCurve() {
+    setSelected((selected) => selected + 1);
+  }
+
+  console.log(selected);
   return (
     <div>
       <Sketch setup={setup} draw={draw} />
 
       <button type="button" onClick={handleAdd}>
-        click
+        ADD RANDOM CURVE
+      </button>
+
+      <button type="button" onClick={handleDelete}>
+        REMOVE LAST RANDOM CURVE
+      </button>
+
+      <button type="button" onClick={handleChangeCurve}>
+        Alternar entre as curvas
       </button>
     </div>
   );

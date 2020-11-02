@@ -4,4 +4,5 @@ export interface Point {
 }
 export interface ISketchProps {
   bezierPointsList: Point[][];
+  selected: number;
 }

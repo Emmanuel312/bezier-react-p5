@@ -6,12 +6,13 @@ import { ISketchProps } from '../interfaces';
 let bezierList: any[][];
 let t: number;
 let bezier: Vector[];
+let current: number;
 
-const useSketch = ({ bezierPointsList }: ISketchProps) => {
+const useSketch = ({ bezierPointsList, selected }: ISketchProps) => {
   useEffect(() => {
-    console.log(`executou`);
     bezierList = bezierPointsList;
-  }, [bezierPointsList]);
+    current = Number(selected);
+  }, [bezierPointsList, selected]);
 
   function casteljau(
     P5: p5Types,
@@ -78,8 +79,8 @@ const useSketch = ({ bezierPointsList }: ISketchProps) => {
 
   const setup = useCallback(
     (P5: p5Types, canvasParentRef: Element) => {
-      // setP5Object(P5);
-      P5.createCanvas(400, 400).parent(canvasParentRef);
+      P5.frameRate(1);
+      P5.createCanvas(1024, 500).parent(canvasParentRef);
       bezierList = bezierPointsList.map((bezier) =>
         bezier.map((point) => P5.createVector(point.x, point.y)),
       );
@@ -97,9 +98,15 @@ const useSketch = ({ bezierPointsList }: ISketchProps) => {
       bezier.forEach((p) => P5.point(p.x, p.y)),
     );
 
-    bezierList.forEach((bezier) => bezierCurve(P5, bezier));
-
-    // P5.noLoop();
+    for (let index = 0; index < bezierList.length; index++) {
+      if (current === index) {
+        P5.stroke(255, 0, 0);
+      } else {
+        P5.stroke(0, 0, 0);
+      }
+      bezierCurve(P5, bezierList[index]);
+      // P5.noStroke();
+    }
   }, []);
 
   return { draw, setup };

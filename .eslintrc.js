@@ -27,6 +27,7 @@ module.exports = {
     'no-unused-vars': 0,
     'prettier/prettier': ['warn'],
     'no-param-reassign': 0,
-    'jsx-curly-newline': 0
+    'jsx-curly-newline': 0,
+    'jsx-a11y/label-has-associated-control': 0,
   },
 };
