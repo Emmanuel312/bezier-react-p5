@@ -4,11 +4,21 @@ import useSketch from './hooks/useSketch';
 import { Point } from './interfaces';
 
 const App: React.FC = () => {
+  const [add, setAdd] = useState<boolean>(false);
   const [bezierPointsList, setBezierPointsList] = useState<Point[][]>(
     [],
   );
   const [selected, setSelected] = useState<number>(-1);
-  const { draw, setup } = useSketch({ bezierPointsList, selected });
+  const {
+    draw,
+    setup,
+    mouseClicked,
+    handleDeleteCurrentCurve,
+  } = useSketch({
+    bezierPointsList,
+    selected,
+    add,
+  });
 
   function makePoints(amount: number) {
     const points = new Array(amount).fill(0);
@@ -19,37 +29,32 @@ const App: React.FC = () => {
   }
 
   function handleAdd() {
-    const newBezier = makePoints(5);
-    console.log(newBezier);
-    setBezierPointsList([...bezierPointsList, newBezier]);
+    // const newBezier = makePoints(5);
+    // console.log(newBezier);
+    // setBezierPointsList([...bezierPointsList, newBezier]);
+    setAdd((add) => !add);
   }
 
   function handleDelete() {
-    const newBezier = makePoints(5);
-    console.log(newBezier);
-    const { length } = bezierPointsList;
-    setBezierPointsList(
-      bezierPointsList.filter(
-        (bezierPoints, index) => index !== length - 1,
-      ),
-    );
+    handleDeleteCurrentCurve();
   }
 
   function handleChangeCurve() {
     setSelected((selected) => selected + 1);
   }
 
-  console.log(selected);
   return (
     <div>
-      <Sketch setup={setup} draw={draw} />
+      <Sketch setup={setup} draw={draw} mouseClicked={mouseClicked} />
 
       <button type="button" onClick={handleAdd}>
-        ADD RANDOM CURVE
+        {!add
+          ? 'Adicionar pontos de uma nova curva de bezier'
+          : 'Criar curva com os pontos selecionados'}
       </button>
 
       <button type="button" onClick={handleDelete}>
-        REMOVE LAST RANDOM CURVE
+        Delete current curve
       </button>
 
       <button type="button" onClick={handleChangeCurve}>
