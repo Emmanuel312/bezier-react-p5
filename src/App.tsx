@@ -1,37 +1,32 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import Sketch from 'react-p5';
 import useSketch from './hooks/useSketch';
-import { Point } from './interfaces';
 
 const App: React.FC = () => {
   const [add, setAdd] = useState<boolean>(false);
-  const [bezierPointsList, setBezierPointsList] = useState<Point[][]>(
-    [],
-  );
+  const [pointAmount, setPointAmount] = useState<string>('1');
   const [selected, setSelected] = useState<number>(-1);
   const {
     draw,
     setup,
     mouseClicked,
     handleDeleteCurrentCurve,
+    bezierListLength,
   } = useSketch({
-    bezierPointsList,
     selected,
     add,
+    pointAmount,
+    setAdd,
   });
 
-  function makePoints(amount: number) {
-    const points = new Array(amount).fill(0);
-    return points.map((point) => ({
-      x: Math.random() * 1024,
-      y: Math.random() * 500,
-    }));
-  }
+  // useEffect(() => {
+  //   if(!add)
+  //   {
+  //     setPointAmount("")
+  //   }
+  // }, [add])
 
   function handleAdd() {
-    // const newBezier = makePoints(5);
-    // console.log(newBezier);
-    // setBezierPointsList([...bezierPointsList, newBezier]);
     setAdd((add) => !add);
   }
 
@@ -40,7 +35,7 @@ const App: React.FC = () => {
   }
 
   function handleChangeCurve() {
-    setSelected((selected) => selected + 1);
+    setSelected((selected) => (selected + 1) % bezierListLength);
   }
 
   return (
@@ -52,7 +47,16 @@ const App: React.FC = () => {
           ? 'Adicionar pontos de uma nova curva de bezier'
           : 'Criar curva com os pontos selecionados'}
       </button>
-
+      {add && (
+        <>
+          <label>quantidade de pontos de controle</label>
+          <input
+            type="text"
+            value={pointAmount}
+            onChange={(e) => setPointAmount(e.target.value)}
+          />
+        </>
+      )}
       <button type="button" onClick={handleDelete}>
         Delete current curve
       </button>
