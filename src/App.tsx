@@ -7,13 +7,14 @@ const App: React.FC = () => {
   const [evaluationAmount, setEvaluationAmount] = useState<string>(
     '10',
   );
-  const [selected, setSelected] = useState<number>(-1);
+  const [selected, setSelected] = useState<number>(0);
   const {
     draw,
     setup,
     mouseClicked,
     handleDeleteCurrentCurve,
     bezierListLength,
+    mouseDragged,
   } = useSketch({
     selected,
     add,
@@ -29,7 +30,10 @@ const App: React.FC = () => {
   }
 
   function handleChangeCurve() {
-    setSelected((selected) => (selected + 1) % bezierListLength);
+    console.log(bezierListLength);
+    setSelected((selected) =>
+      bezierListLength ? (selected + 1) % (bezierListLength + 1) : 0,
+    );
   }
 
   return (
@@ -37,7 +41,12 @@ const App: React.FC = () => {
       <div style={sideBar}>
         <p>asdsa</p>
       </div>
-      <Sketch setup={setup} draw={draw} mouseClicked={mouseClicked} />
+      <Sketch
+        setup={setup}
+        draw={draw}
+        mouseClicked={mouseClicked}
+        mouseDragged={mouseDragged}
+      />
       <div style={btnStyle}>
         <button type="button" onClick={handleAdd}>
           {!add

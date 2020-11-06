@@ -85,12 +85,6 @@ const useSketch = ({
 
   const draw = useCallback((P5: p5Types) => {
     P5.background(220);
-    P5.strokeWeight(5);
-    bezierList.forEach((bezier) =>
-      bezier.curve.forEach((p) => P5.point(p.x, p.y)),
-    );
-
-    currentCurve?.forEach((p) => P5.point(p.x, p.y));
 
     for (let index = 0; index < bezierList.length; index++) {
       if (current === index) {
@@ -105,6 +99,14 @@ const useSketch = ({
       );
       P5.stroke(0, 0, 0);
     }
+
+    P5.strokeWeight(5);
+    bezierList.forEach((bezier) =>
+      bezier.curve.forEach((p) => P5.point(p.x, p.y)),
+    );
+
+    currentCurve?.forEach((p) => P5.point(p.x, p.y));
+
     // P5.noLoop();
   }, []);
 
@@ -124,11 +126,37 @@ const useSketch = ({
     [add, currentCurve],
   );
 
+  const inRange = (point1: number, point2: number, range: number) => {
+    return point1 >= point2 - range && point1 <= point2 + range;
+  };
+
+  const mouseDragged = useCallback(
+    (P5: p5Types) => {
+      console.log('dragged');
+      const selectedPointIndex = bezierList[
+        selected
+      ]?.curve?.findIndex(
+        (point) =>
+          inRange(P5.mouseX, point.x, 30) &&
+          inRange(P5.mouseY, point.y, 30),
+      );
+
+      if (selectedPointIndex !== -1 && bezierList.length) {
+        bezierList[selected].curve[
+          selectedPointIndex
+        ] = P5.createVector(P5.mouseX, P5.mouseY);
+      }
+    },
+
+    [bezierList],
+  );
+
   return {
     draw,
     setup,
     mouseClicked,
     handleDeleteCurrentCurve,
+    mouseDragged,
     bezierListLength: bezierList?.length || 0,
   };
 };
