@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import Sketch from 'react-p5';
+import { Z_FIXED } from 'zlib';
 import useSketch from './hooks/useSketch';
 import { Point } from './interfaces';
 
@@ -40,23 +41,44 @@ const App: React.FC = () => {
   }
 
   console.log(selected);
+
+  
   return (
-    <div>
+    <div style={bodyStyle}>
       <Sketch setup={setup} draw={draw} />
+      <div style={btnStyle}>
+        <button type="button" onClick={handleAdd}>
+          ADD RANDOM CURVE
+        </button>
 
-      <button type="button" onClick={handleAdd}>
-        ADD RANDOM CURVE
-      </button>
+        <button type="button" onClick={handleDelete}>
+          REMOVE LAST RANDOM CURVE
+        </button>
 
-      <button type="button" onClick={handleDelete}>
-        REMOVE LAST RANDOM CURVE
-      </button>
-
-      <button type="button" onClick={handleChangeCurve}>
-        Alternar entre as curvas
-      </button>
+        <button type="button" onClick={handleChangeCurve}>
+          Alternar entre as curvas
+        </button>
+      </div>
     </div>
   );
 };
+
+const btnStyle = {
+  display: 'flex',
+  flexDirection: 'row' as 'row',
+}
+
+
+const bodyStyle = {
+  display: 'flex',
+  justifyContent: 'center' as 'center',
+  alignItems: 'center',
+  flex: 1,
+  flexDirection: 'column' as 'column',
+  height: '100vh',
+}
+
+
+
 
 export default App;
