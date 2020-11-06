@@ -40,7 +40,6 @@ const App: React.FC = () => {
   }
 
   return (
-    
     <div style={bodyStyle}>
       <div style={sideBar}>
         <p>asdsa</p>
