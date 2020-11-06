@@ -132,7 +132,7 @@ const useSketch = ({
 
   const mouseDragged = useCallback(
     (P5: p5Types) => {
-      console.log('dragged');
+      console.log('selected', selected);
       const selectedPointIndex = bezierList[
         selected
       ]?.curve?.findIndex(
@@ -148,7 +148,33 @@ const useSketch = ({
       }
     },
 
-    [bezierList],
+    [bezierList, selected],
+  );
+
+  const keyPressed = useCallback(
+    (P5: p5Types) => {
+      if (P5.keyCode === P5.BACKSPACE) {
+        const selectedPointIndex = bezierList[
+          selected
+        ]?.curve?.findIndex(
+          (point) =>
+            inRange(P5.mouseX, point.x, 30) &&
+            inRange(P5.mouseY, point.y, 30),
+        );
+
+        if (selectedPointIndex !== -1 && bezierList.length) {
+          bezierList[selected].curve.splice(selectedPointIndex, 1);
+        }
+      }
+
+      if (P5.keyCode === P5.ENTER) {
+        bezierList[selected].curve.push(
+          P5.createVector(P5.mouseX, P5.mouseY),
+        );
+      }
+    },
+
+    [bezierList, selected],
   );
 
   return {
@@ -157,6 +183,7 @@ const useSketch = ({
     mouseClicked,
     handleDeleteCurrentCurve,
     mouseDragged,
+    keyPressed,
     bezierListLength: bezierList?.length || 0,
   };
 };

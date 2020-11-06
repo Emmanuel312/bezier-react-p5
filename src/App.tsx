@@ -15,6 +15,7 @@ const App: React.FC = () => {
     handleDeleteCurrentCurve,
     bezierListLength,
     mouseDragged,
+    keyPressed,
   } = useSketch({
     selected,
     add,
@@ -38,12 +39,11 @@ const App: React.FC = () => {
 
   return (
     <div style={bodyStyle}>
-      <div style={sideBar}>
-        <p>asdsa</p>
-      </div>
+      <div style={sideBar}>{/* <p>asdsa</p> */}</div>
       <Sketch
         setup={setup}
         draw={draw}
+        keyPressed={keyPressed}
         mouseClicked={mouseClicked}
         mouseDragged={mouseDragged}
       />
