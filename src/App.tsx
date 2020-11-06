@@ -1,63 +1,71 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import Sketch from 'react-p5';
 import { Z_FIXED } from 'zlib';
 import useSketch from './hooks/useSketch';
-import { Point } from './interfaces';
 
 const App: React.FC = () => {
-  const [bezierPointsList, setBezierPointsList] = useState<Point[][]>(
-    [],
-  );
+  const [add, setAdd] = useState<boolean>(false);
+  const [pointAmount, setPointAmount] = useState<string>('1');
   const [selected, setSelected] = useState<number>(-1);
-  const { draw, setup } = useSketch({ bezierPointsList, selected });
+  const {
+    draw,
+    setup,
+    mouseClicked,
+    handleDeleteCurrentCurve,
+    bezierListLength,
+  } = useSketch({
+    selected,
+    add,
+    pointAmount,
+    setAdd,
+  });
 
-  function makePoints(amount: number) {
-    const points = new Array(amount).fill(0);
-    return points.map((point) => ({
-      x: Math.random() * 1024,
-      y: Math.random() * 500,
-    }));
-  }
+  // useEffect(() => {
+  //   if(!add)
+  //   {
+  //     setPointAmount("")
+  //   }
+  // }, [add])
 
   function handleAdd() {
-    const newBezier = makePoints(5);
-    console.log(newBezier);
-    setBezierPointsList([...bezierPointsList, newBezier]);
+    setAdd((add) => !add);
   }
 
   function handleDelete() {
-    const newBezier = makePoints(5);
-    console.log(newBezier);
-    const { length } = bezierPointsList;
-    setBezierPointsList(
-      bezierPointsList.filter(
-        (bezierPoints, index) => index !== length - 1,
-      ),
-    );
+    handleDeleteCurrentCurve();
   }
 
   function handleChangeCurve() {
-    setSelected((selected) => selected + 1);
+    setSelected((selected) => (selected + 1) % bezierListLength);
   }
 
-  console.log(selected);
-
-  
   return (
+    
     <div style={bodyStyle}>
-      <Sketch setup={setup} draw={draw} />
+      <div style={sideBar}>
+        <p>asdsa</p>
+      </div>
+      <Sketch setup={setup} draw={draw} mouseClicked={mouseClicked} />
       <div style={btnStyle}>
         <button type="button" onClick={handleAdd}>
-          ADD RANDOM CURVE
+          {!add
+            ? 'Adicionar pontos de uma nova curva de bezier'
+            : 'Criar curva com os pontos selecionados'}
         </button>
-
+        {add && (
+          <>
+            <label>quantidade de pontos de controle</label>
+            <input
+              type="text"
+              value={pointAmount}
+              onChange={(e) => setPointAmount(e.target.value)}
+            />
+          </>
+        )}
         <button type="button" onClick={handleDelete}>
-          REMOVE LAST RANDOM CURVE
+          Delete current curve
         </button>
-
-        <button type="button" onClick={handleChangeCurve}>
-          Alternar entre as curvas
-        </button>
+        <button type="button" onClick={handleChangeCurve}>Alternar entre as curvas</button>
       </div>
     </div>
   );
@@ -76,6 +84,12 @@ const bodyStyle = {
   flex: 1,
   flexDirection: 'column' as 'column',
   height: '100vh',
+}
+
+const sideBar = {
+  display: 'flex',
+  justifyContent: 'flex-start' as 'flex-start',
+  background: 'red'
 }
 
 
