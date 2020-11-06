@@ -1,31 +1,26 @@
 import React, { useEffect, useState } from 'react';
 import Sketch from 'react-p5';
-import { Z_FIXED } from 'zlib';
 import useSketch from './hooks/useSketch';
 
 const App: React.FC = () => {
   const [add, setAdd] = useState<boolean>(false);
-  const [pointAmount, setPointAmount] = useState<string>('1');
-  const [selected, setSelected] = useState<number>(-1);
+  const [evaluationAmount, setEvaluationAmount] = useState<string>(
+    '10',
+  );
+  const [selected, setSelected] = useState<number>(0);
   const {
     draw,
     setup,
     mouseClicked,
     handleDeleteCurrentCurve,
     bezierListLength,
+    mouseDragged,
+    keyPressed,
   } = useSketch({
     selected,
     add,
-    pointAmount,
-    setAdd,
+    evaluationAmount,
   });
-
-  // useEffect(() => {
-  //   if(!add)
-  //   {
-  //     setPointAmount("")
-  //   }
-  // }, [add])
 
   function handleAdd() {
     setAdd((add) => !add);
@@ -36,35 +31,44 @@ const App: React.FC = () => {
   }
 
   function handleChangeCurve() {
-    setSelected((selected) => (selected + 1) % bezierListLength);
+    console.log(bezierListLength);
+    setSelected((selected) =>
+      bezierListLength ? (selected + 1) % (bezierListLength + 1) : 0,
+    );
   }
 
   return (
     <div style={bodyStyle}>
-      <div style={sideBar}>
-        <p>asdsa</p>
-      </div>
-      <Sketch setup={setup} draw={draw} mouseClicked={mouseClicked} />
+      <div style={sideBar}>{/* <p>asdsa</p> */}</div>
+      <Sketch
+        setup={setup}
+        draw={draw}
+        keyPressed={keyPressed}
+        mouseClicked={mouseClicked}
+        mouseDragged={mouseDragged}
+      />
       <div style={btnStyle}>
         <button type="button" onClick={handleAdd}>
           {!add
             ? 'Adicionar pontos de uma nova curva de bezier'
-            : 'Criar curva com os pontos selecionados'}
+            : 'Criar curva de bezier'}
         </button>
         {add && (
           <>
-            <label>quantidade de pontos de controle</label>
+            <label>Numero de avaliação da curva atual</label>
             <input
               type="text"
-              value={pointAmount}
-              onChange={(e) => setPointAmount(e.target.value)}
+              value={evaluationAmount}
+              onChange={(e) => setEvaluationAmount(e.target.value)}
             />
           </>
         )}
         <button type="button" onClick={handleDelete}>
           Delete current curve
         </button>
-        <button type="button" onClick={handleChangeCurve}>Alternar entre as curvas</button>
+        <button type="button" onClick={handleChangeCurve}>
+          Alternar entre as curvas
+        </button>
       </div>
     </div>
   );
@@ -73,8 +77,7 @@ const App: React.FC = () => {
 const btnStyle = {
   display: 'flex',
   flexDirection: 'row' as 'row',
-}
-
+};
 
 const bodyStyle = {
   display: 'flex',
@@ -83,15 +86,12 @@ const bodyStyle = {
   flex: 1,
   flexDirection: 'column' as 'column',
   height: '100vh',
-}
+};
 
 const sideBar = {
   display: 'flex',
   justifyContent: 'flex-start' as 'flex-start',
-  background: 'red'
-}
-
-
-
+  background: 'red',
+};
 
 export default App;

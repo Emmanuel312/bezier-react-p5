@@ -1,6 +1,10 @@
 export interface ISketchProps {
   selected: number;
   add: boolean;
-  pointAmount: string;
-  setAdd: (add: boolean) => void;
+  evaluationAmount: string;
+}
+
+export interface IBezierList {
+  curve: any[];
+  evaluationAmount: number;
 }

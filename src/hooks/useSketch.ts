@@ -1,30 +1,31 @@
 import p5Types, { Vector } from 'p5'; // Import this for typechecking and intellisense
 import { useCallback, useEffect } from 'react';
-import { ISketchProps } from '../interfaces';
+import { IBezierList, ISketchProps } from '../interfaces';
 
 const WIDTH = 1024;
 const HEIGHT = 500;
 
-let bezierList: any[][] = [];
+let bezierList: Array<IBezierList> = [];
 let t: number;
 let bezier: Vector[];
 let current: number;
 let addCurve: boolean;
 let currentCurve: any[] = [];
-let clickAmount: number = 0;
 
 const useSketch = ({
-  pointAmount,
   selected,
   add,
-  setAdd,
+  evaluationAmount,
 }: ISketchProps) => {
   useEffect(() => {
     // bezierList = bezierPointsList;
     current = Number(selected);
     addCurve = add;
     if (!add && currentCurve?.length) {
-      bezierList.push(currentCurve);
+      bezierList.push({
+        curve: currentCurve,
+        evaluationAmount: Number(evaluationAmount),
+      });
       currentCurve = [];
     }
   }, [selected, add]);
@@ -56,9 +57,9 @@ const useSketch = ({
     return casteljauRecursive(P5, result, t);
   }
 
-  function bezierCurve(P5: p5Types, points: Vector[]) {
+  function bezierCurve(P5: p5Types, points: Vector[], step: number) {
     P5.noFill();
-    for (t = 0; t <= 1; t += 0.1) {
+    for (t = 0; t <= 1; t += step) {
       const currentPoint = casteljauRecursive(P5, points, t);
       bezier.push(currentPoint);
     }
@@ -75,11 +76,7 @@ const useSketch = ({
 
   const setup = useCallback(
     (P5: p5Types, canvasParentRef: Element) => {
-      // P5.frameRate(1);
       P5.createCanvas(WIDTH, HEIGHT).parent(canvasParentRef);
-      // bezierList = bezierPointsList.map((bezier) =>
-      //   bezier.map((point) => P5.createVector(point.x, point.y)),
-      // );
       t = 0;
       bezier = [];
     },
@@ -88,12 +85,6 @@ const useSketch = ({
 
   const draw = useCallback((P5: p5Types) => {
     P5.background(220);
-    P5.strokeWeight(5);
-    bezierList.forEach((bezier) =>
-      bezier.forEach((p) => P5.point(p.x, p.y)),
-    );
-
-    currentCurve?.forEach((p) => P5.point(p.x, p.y));
 
     for (let index = 0; index < bezierList.length; index++) {
       if (current === index) {
@@ -101,9 +92,21 @@ const useSketch = ({
       } else {
         P5.stroke(0, 0, 0);
       }
-      bezierCurve(P5, bezierList[index]);
+      bezierCurve(
+        P5,
+        bezierList[index].curve,
+        1 / bezierList[index].evaluationAmount,
+      );
       P5.stroke(0, 0, 0);
     }
+
+    P5.strokeWeight(5);
+    bezierList.forEach((bezier) =>
+      bezier.curve.forEach((p) => P5.point(p.x, p.y)),
+    );
+
+    currentCurve?.forEach((p) => P5.point(p.x, p.y));
+
     // P5.noLoop();
   }, []);
 
@@ -117,18 +120,61 @@ const useSketch = ({
         addCurve
       ) {
         currentCurve.push(P5.createVector(P5.mouseX, P5.mouseY));
-        clickAmount++;
-      }
-
-      if (clickAmount === Number(pointAmount)) {
-        setAdd(false);
-        console.log(clickAmount, Number(pointAmount));
-        console.log(`fim boy`);
-        clickAmount = 0;
       }
     },
 
-    [add, currentCurve, pointAmount],
+    [add, currentCurve],
+  );
+
+  const inRange = (point1: number, point2: number, range: number) => {
+    return point1 >= point2 - range && point1 <= point2 + range;
+  };
+
+  const mouseDragged = useCallback(
+    (P5: p5Types) => {
+      console.log('selected', selected);
+      const selectedPointIndex = bezierList[
+        selected
+      ]?.curve?.findIndex(
+        (point) =>
+          inRange(P5.mouseX, point.x, 30) &&
+          inRange(P5.mouseY, point.y, 30),
+      );
+
+      if (selectedPointIndex !== -1 && bezierList.length) {
+        bezierList[selected].curve[
+          selectedPointIndex
+        ] = P5.createVector(P5.mouseX, P5.mouseY);
+      }
+    },
+
+    [bezierList, selected],
+  );
+
+  const keyPressed = useCallback(
+    (P5: p5Types) => {
+      if (P5.keyCode === P5.BACKSPACE) {
+        const selectedPointIndex = bezierList[
+          selected
+        ]?.curve?.findIndex(
+          (point) =>
+            inRange(P5.mouseX, point.x, 30) &&
+            inRange(P5.mouseY, point.y, 30),
+        );
+
+        if (selectedPointIndex !== -1 && bezierList.length) {
+          bezierList[selected].curve.splice(selectedPointIndex, 1);
+        }
+      }
+
+      if (P5.keyCode === P5.ENTER) {
+        bezierList[selected].curve.push(
+          P5.createVector(P5.mouseX, P5.mouseY),
+        );
+      }
+    },
+
+    [bezierList, selected],
   );
 
   return {
@@ -136,6 +182,8 @@ const useSketch = ({
     setup,
     mouseClicked,
     handleDeleteCurrentCurve,
+    mouseDragged,
+    keyPressed,
     bezierListLength: bezierList?.length || 0,
   };
 };
