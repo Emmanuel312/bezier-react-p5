@@ -1,6 +1,9 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, Fragment, Component } from 'react';
 import Sketch from 'react-p5';
 import useSketch from './hooks/useSketch';
+import SideBar from './SideBar';
+import './style/App.css'
+
 
 const App: React.FC = () => {
   const [add, setAdd] = useState<boolean>(false);
@@ -38,37 +41,56 @@ const App: React.FC = () => {
   }
 
   return (
-    <div style={bodyStyle}>
-      <div style={sideBar}>{/* <p>asdsa</p> */}</div>
-      <Sketch
-        setup={setup}
-        draw={draw}
-        keyPressed={keyPressed}
-        mouseClicked={mouseClicked}
-        mouseDragged={mouseDragged}
-      />
-      <div style={btnStyle}>
-        <button type="button" onClick={handleAdd}>
-          {!add
-            ? 'Adicionar pontos de uma nova curva de bezier'
-            : 'Criar curva de bezier'}
-        </button>
-        {add && (
-          <>
-            <label>Numero de avaliação da curva atual</label>
-            <input
-              type="text"
-              value={evaluationAmount}
-              onChange={(e) => setEvaluationAmount(e.target.value)}
+    <div>
+      <div className="header">
+        <div className="headerContent">
+          <p>Processamento Gráfico</p>
+        </div>
+      </div>
+      <div className="page">
+        <div className="sideBBar">
+          <p className="center">Curva de Bezier</p>
+          <div className="line"><></></div>
+          <div className="footer">
+            <p>Rodrigo Ferreira - rfop@cin.ufpe</p>
+            <p>Emmanuel Felipe - efn@cin.ufpe.br</p>
+          </div>
+          
+        </div>
+        <div className="content">
+          <div style={bodyStyle}>
+            <Sketch
+              setup={setup}
+              draw={draw}
+              keyPressed={keyPressed}
+              mouseClicked={mouseClicked}
+              mouseDragged={mouseDragged}
             />
-          </>
-        )}
-        <button type="button" onClick={handleDelete}>
-          Delete current curve
-        </button>
-        <button type="button" onClick={handleChangeCurve}>
-          Alternar entre as curvas
-        </button>
+            <div style={btnStyle}>
+              <button type="button" onClick={handleAdd}>
+                {!add
+                  ? 'Adicionar pontos de uma nova curva de bezier'
+                  : 'Criar curva de bezier'}
+              </button>
+              {add && (
+                <>
+                  <label>Numero de avaliação da curva atual</label>
+                  <input
+                    type="text"
+                    value={evaluationAmount}
+                    onChange={(e) => setEvaluationAmount(e.target.value)}
+                  />
+                </>
+              )}
+              <button type="button" onClick={handleDelete}>
+                Delete current curve
+              </button>
+              <button type="button" onClick={handleChangeCurve}>
+                Alternar entre as curvas
+              </button>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   );
@@ -88,10 +110,6 @@ const bodyStyle = {
   height: '100vh',
 };
 
-const sideBar = {
-  display: 'flex',
-  justifyContent: 'flex-start' as 'flex-start',
-  background: 'red',
-};
+
 
 export default App;
