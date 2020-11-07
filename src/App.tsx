@@ -1,12 +1,26 @@
-import React, { useEffect, useState, Fragment, Component } from 'react';
+import React, {
+  useEffect,
+  useState,
+  Fragment,
+  Component,
+} from 'react';
 import Sketch from 'react-p5';
 import useSketch from './hooks/useSketch';
+import { ICheckboxStates } from './interfaces';
 import SideBar from './SideBar';
-import './style/App.css'
+import './style/App.css';
 
+const INITIAL_CHECKBOX_STATES: ICheckboxStates = {
+  curve: true,
+  line: true,
+  points: true,
+};
 
 const App: React.FC = () => {
   const [add, setAdd] = useState<boolean>(false);
+  const [checkboxStates, setCheckboxStates] = useState<
+    ICheckboxStates
+  >(INITIAL_CHECKBOX_STATES);
   const [evaluationAmount, setEvaluationAmount] = useState<string>(
     '10',
   );
@@ -23,6 +37,7 @@ const App: React.FC = () => {
     selected,
     add,
     evaluationAmount,
+    checkboxStates,
   });
 
   function handleAdd() {
@@ -50,15 +65,16 @@ const App: React.FC = () => {
       <div className="page">
         <div className="sideBBar">
           <p className="center">Curva de Bezier</p>
-          <div className="line"><></></div>
+          <div className="line">
+            <></>
+          </div>
           <div className="footer">
             <p>Rodrigo Ferreira - rfop@cin.ufpe</p>
             <p>Emmanuel Felipe - efn@cin.ufpe.br</p>
           </div>
-          
         </div>
         <div className="content">
-          <div style={bodyStyle}>
+          <div>
             <Sketch
               setup={setup}
               draw={draw}
@@ -66,7 +82,7 @@ const App: React.FC = () => {
               mouseClicked={mouseClicked}
               mouseDragged={mouseDragged}
             />
-            <div style={btnStyle}>
+            <div>
               <button type="button" onClick={handleAdd}>
                 {!add
                   ? 'Adicionar pontos de uma nova curva de bezier'
@@ -78,7 +94,9 @@ const App: React.FC = () => {
                   <input
                     type="text"
                     value={evaluationAmount}
-                    onChange={(e) => setEvaluationAmount(e.target.value)}
+                    onChange={(e) =>
+                      setEvaluationAmount(e.target.value)
+                    }
                   />
                 </>
               )}
@@ -88,17 +106,52 @@ const App: React.FC = () => {
               <button type="button" onClick={handleChangeCurve}>
                 Alternar entre as curvas
               </button>
+              <div>
+                <label>Curvas</label>
+                <input
+                  type="checkbox"
+                  defaultChecked={checkboxStates?.curve}
+                  onChange={() =>
+                    setCheckboxStates({
+                      ...checkboxStates,
+                      curve: !checkboxStates.curve,
+                    })
+                  }
+                  checked={checkboxStates?.curve}
+                />
+
+                <label>Poligonais de controle</label>
+                <input
+                  type="checkbox"
+                  defaultChecked={checkboxStates?.line}
+                  onChange={() =>
+                    setCheckboxStates({
+                      ...checkboxStates,
+                      line: !checkboxStates.line,
+                    })
+                  }
+                  checked={checkboxStates?.line}
+                />
+
+                <label>Pontos de controle</label>
+                <input
+                  type="checkbox"
+                  defaultChecked={checkboxStates?.points}
+                  onChange={() =>
+                    setCheckboxStates({
+                      ...checkboxStates,
+                      points: !checkboxStates.points,
+                    })
+                  }
+                  checked={checkboxStates?.points}
+                />
+              </div>
             </div>
           </div>
         </div>
       </div>
     </div>
   );
-};
-
-const btnStyle = {
-  display: 'flex',
-  flexDirection: 'row' as 'row',
 };
 
 const bodyStyle = {
@@ -109,7 +162,5 @@ const bodyStyle = {
   flexDirection: 'column' as 'column',
   height: '100vh',
 };
-
-
 
 export default App;

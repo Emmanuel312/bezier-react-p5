@@ -16,6 +16,7 @@ const useSketch = ({
   selected,
   add,
   evaluationAmount,
+  checkboxStates,
 }: ISketchProps) => {
   useEffect(() => {
     // bezierList = bezierPointsList;
@@ -83,32 +84,60 @@ const useSketch = ({
     [],
   );
 
-  const draw = useCallback((P5: p5Types) => {
-    P5.background(220);
-
-    for (let index = 0; index < bezierList.length; index++) {
-      if (current === index) {
-        P5.stroke(255, 0, 0);
-      } else {
-        P5.stroke(0, 0, 0);
+  const draw = useCallback(
+    (P5: p5Types) => {
+      P5.background(220);
+      if (checkboxStates?.curve) {
+        // curvas de bezier
+        for (let index = 0; index < bezierList.length; index++) {
+          if (current === index) {
+            P5.stroke(255, 0, 0);
+          } else {
+            P5.stroke(0, 0, 0);
+          }
+          bezierCurve(
+            P5,
+            bezierList[index].curve,
+            1 / bezierList[index].evaluationAmount,
+          );
+          P5.stroke(0, 0, 0);
+        }
       }
-      bezierCurve(
-        P5,
-        bezierList[index].curve,
-        1 / bezierList[index].evaluationAmount,
-      );
-      P5.stroke(0, 0, 0);
-    }
 
-    P5.strokeWeight(5);
-    bezierList.forEach((bezier) =>
-      bezier.curve.forEach((p) => P5.point(p.x, p.y)),
-    );
+      if (checkboxStates?.line) {
+        // poligonais de controle
+        bezierList.forEach((bezier) => {
+          for (
+            let index = 0;
+            index < bezier.curve.length - 1;
+            index++
+          ) {
+            P5.stroke(169, 169, 169);
+            P5.line(
+              bezier.curve[index].x,
+              bezier.curve[index].y,
+              bezier.curve[index + 1].x,
+              bezier.curve[index + 1].y,
+            );
+            P5.stroke(0, 0, 0);
+          }
+        });
+        P5.strokeWeight(5);
+      }
 
-    currentCurve?.forEach((p) => P5.point(p.x, p.y));
+      if (checkboxStates?.points) {
+        // pontos de controle
+        bezierList.forEach((bezier) =>
+          bezier.curve.forEach((p) => P5.point(p.x, p.y)),
+        );
+        // pontos de controle da curva atual
+        currentCurve?.forEach((p) => P5.point(p.x, p.y));
+      }
 
-    // P5.noLoop();
-  }, []);
+      // P5.noLoop();
+    },
+    [checkboxStates],
+  );
 
   const mouseClicked = useCallback(
     (P5: p5Types) => {
