@@ -2,6 +2,7 @@
 
 Nesse projeto usamos React para o front e conectamos a ele lógicas do p5.js
 
+![alt text](https://i.imgur.com/s3ZuRgP.png)
 
 ## Para rodar
 
@@ -13,7 +14,7 @@ Para usar basta clicar em Adicionar pontos de uma nova curva de bezier e escolhe
 
 Para deleter uma curva basta alternar para a curva deseja no botão alternar curva e a curva selecionada vai ficar vermelha
 
-![alt text](https://i.imgur.com/s3ZuRgP.png)
+
 ## Dupla
 
 Rodrigo ferreira Oliveira de Paula (rfop)
