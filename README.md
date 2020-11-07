@@ -16,7 +16,7 @@ Para deleter uma curva basta alternar para a curva deseja no botão alternar cur
 
 ## Adicionar e remover pontos de controle
 
-Para adicionar pontos de controle coloque o mouse em alugar no canvas e aperte enter
+Para adicionar pontos de controle coloque o mouse em alugar no canvas e aperte alt
 
 Para remover coloque o mouse em cima de algum ponto de controle e aperte backspace
 
