@@ -22,13 +22,15 @@ const useSketch = ({
     // bezierList = bezierPointsList;
     current = Number(selected);
     addCurve = add;
-    if (!add && currentCurve?.length) {
+
+    if (!add && currentCurve?.length > 1) {
       bezierList.push({
         curve: currentCurve,
         evaluationAmount: Number(evaluationAmount),
       });
       currentCurve = [];
     }
+    currentCurve = [];
   }, [selected, add]);
 
   function handleDeleteCurrentCurve() {
@@ -161,9 +163,9 @@ const useSketch = ({
 
   const mouseDragged = useCallback(
     (P5: p5Types) => {
-      console.log('selected', selected);
+      console.log('current', current);
       const selectedPointIndex = bezierList[
-        selected
+        current
       ]?.curve?.findIndex(
         (point) =>
           inRange(P5.mouseX, point.x, 30) &&
@@ -171,39 +173,47 @@ const useSketch = ({
       );
 
       if (selectedPointIndex !== -1 && bezierList.length) {
-        bezierList[selected].curve[
+        bezierList[current].curve[
           selectedPointIndex
         ] = P5.createVector(P5.mouseX, P5.mouseY);
       }
     },
 
-    [bezierList, selected],
+    [bezierList, current],
   );
 
   const keyPressed = useCallback(
     (P5: p5Types) => {
       if (P5.keyCode === P5.BACKSPACE) {
         const selectedPointIndex = bezierList[
-          selected
+          current
         ]?.curve?.findIndex(
           (point) =>
             inRange(P5.mouseX, point.x, 30) &&
             inRange(P5.mouseY, point.y, 30),
         );
 
-        if (selectedPointIndex !== -1 && bezierList.length) {
-          bezierList[selected].curve.splice(selectedPointIndex, 1);
+        if (
+          selectedPointIndex !== -1 &&
+          bezierList.length &&
+          bezierList[current].curve.length > 2
+        ) {
+          bezierList[current].curve.splice(selectedPointIndex, 1);
+          console.log(
+            `bezierList[current].curve.length`,
+            bezierList[current].curve.length,
+          );
         }
       }
 
-      if (P5.keyCode === P5.ENTER) {
-        bezierList[selected].curve.push(
+      if (P5.keyCode === P5.ALT) {
+        bezierList[current].curve.push(
           P5.createVector(P5.mouseX, P5.mouseY),
         );
       }
     },
 
-    [bezierList, selected],
+    [bezierList, current],
   );
 
   return {
