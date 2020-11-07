@@ -14,6 +14,15 @@ Para usar basta clicar em Adicionar pontos de uma nova curva de bezier e escolhe
 
 Para deleter uma curva basta alternar para a curva deseja no botão alternar curva e a curva selecionada vai ficar vermelha
 
+## Adicionar e remover pontos de controle
+
+Para adicionar pontos de controle coloque o mouse em alugar no canvas e aperte enter
+
+Para remover coloque o mouse em cima de algum ponto de controle e aperte backspace
+
+## Para exibir/esconder curvas, poligonais de controle e pontos de controle
+
+Para exibir/esconder basta clicar no checkbox embaixo dos botões que os pontos vão ser exibidos/escondidos
 
 ## Dupla
 
